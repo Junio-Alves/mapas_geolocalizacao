@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,8 +10,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  GoogleMapController? _controller;
+  LatLng initialPosition = const LatLng(-15.793889, -47.882778);
+
+  onMapCreated(GoogleMapController controller) {
+    _controller = controller;
+  }
+
+  recuperarPosicao() async {
+    //permissao
+    Position position = await Geolocator.getCurrentPosition();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,13 +30,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: GoogleMap(
         mapType: MapType.normal,
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(-15.793889, -47.882778),
+        initialCameraPosition: CameraPosition(
+          target: initialPosition,
           zoom: 11,
         ),
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
+        onMapCreated: onMapCreated,
       ),
     );
   }
