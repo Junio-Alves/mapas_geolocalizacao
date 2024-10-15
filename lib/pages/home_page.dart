@@ -19,7 +19,31 @@ class _HomePageState extends State<HomePage> {
 
   recuperarPosicao() async {
     //permissao
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (serviceEnabled == false) {
+      print("Serviço de localização desabilitado");
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        print("Permisão de localização negada");
+      }
+    }
+
     Position position = await Geolocator.getCurrentPosition();
+    initialPosition = LatLng(position.latitude, position.longitude);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    recuperarPosicao();
   }
 
   @override
